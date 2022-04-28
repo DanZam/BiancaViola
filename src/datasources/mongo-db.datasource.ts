@@ -7,7 +7,7 @@ const config = {
   url: '',
   host: 'localhost',
   port: 27017,
-  user: 'root',
+  user: '',
   password: '',
   database: 'seguridad',
   useNewUrlParser: true
