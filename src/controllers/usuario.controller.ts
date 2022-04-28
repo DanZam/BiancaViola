@@ -1,3 +1,4 @@
+import { service } from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -19,11 +20,14 @@ import {
 } from '@loopback/rest';
 import {Usuario} from '../models';
 import {UsuarioRepository} from '../repositories';
+import { FuncionesGeneralesService } from '../services';
 
 export class UsuarioController {
   constructor(
     @repository(UsuarioRepository)
     public usuarioRepository : UsuarioRepository,
+    @service(FuncionesGeneralesService)
+    public funcionesGenerales: FuncionesGeneralesService,
   ) {}
 
   @post('/usuarios')
@@ -37,14 +41,23 @@ export class UsuarioController {
         'application/json': {
           schema: getModelSchemaRef(Usuario, {
             title: 'NewUsuario',
-            exclude: ['id'],
+            exclude: ['id', 'clave'],
           }),
         },
       },
     })
     usuario: Omit<Usuario, 'id'>,
   ): Promise<Usuario> {
-    return this.usuarioRepository.create(usuario);
+
+    let claveAleatoria = this.funcionesGenerales.crearClaveAleatoria();
+    
+    let claveCifrada = this.funcionesGenerales.cifrarTexto(claveAleatoria);
+
+    usuario.clave = claveCifrada;
+
+    let nuevoUsuario = await this.usuarioRepository.create(usuario);
+
+    return nuevoUsuario;
   }
 
   @get('/usuarios/count')
