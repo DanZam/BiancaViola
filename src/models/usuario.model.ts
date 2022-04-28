@@ -1,0 +1,43 @@
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {TipoUsuario} from './tipo-usuario.model';
+
+@model()
+export class Usuario extends Entity {
+  @property({
+    type: 'string',
+    id: true,
+    generated: true,
+  })
+  id?: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  nombreUsuario: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  clave: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  tipoUsuario: string;
+
+  @belongsTo(() => TipoUsuario)
+  tipoUsuarioId: string;
+
+  constructor(data?: Partial<Usuario>) {
+    super(data);
+  }
+}
+
+export interface UsuarioRelations {
+  // describe navigational properties here
+}
+
+export type UsuarioWithRelations = Usuario & UsuarioRelations;
